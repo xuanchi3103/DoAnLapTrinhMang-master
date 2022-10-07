@@ -57,3 +57,22 @@ end;
 go
 exec dangky @taikhoan='e', @matkhau='e';
 exec dangky @taikhoan='q', @matkhau='q'
+
+-- trigger tao tai khoan va mat khau > 6 ký tự
+go
+create trigger check_Account on USER_ACCOUNT
+for insert as
+BEGIN
+	IF exists (
+				select taiKhoan, matKhau 
+				from USER_ACCOUNT
+				group by taiKhoan, matKhau
+				having LEN(taiKhoan) < 6 or LEN(matKhau) < 6
+			  )
+	BEGIN
+		PRINT N'Tài khoản và mật khẩu phải có tối thiểu 6 ký tự'
+		ROLLBACK TRAN
+	END
+END
+go
+
